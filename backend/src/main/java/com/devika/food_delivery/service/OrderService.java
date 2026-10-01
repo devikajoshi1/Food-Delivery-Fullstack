@@ -9,7 +9,7 @@ import com.devika.food_delivery.repository.MenuItemRepository;
 import com.devika.food_delivery.repository.OrderRepository;
 import com.devika.food_delivery.repository.RestaurantRepository;
 import com.devika.food_delivery.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -59,6 +59,16 @@ public class OrderService {
 
         order.setTotalAmount(total);
         orderRepository.save(order);
+        return OrderResponse.from(order);
+    }
+
+    @Transactional(readOnly = true)
+    public OrderResponse getOrder(Long userId, Long orderId){
+        Order order = orderRepository.findById(orderId)
+                .filter(found -> found.getUser().getId().equals(userId))
+                .orElseThrow(()-> new NotFoundException(
+                        "Order " + orderId + " not found"));
+
         return OrderResponse.from(order);
     }
 }
