@@ -23,8 +23,8 @@ public class RestaurantController {
     public PageResponse<RestaurantResponse> search(
             @RequestParam(defaultValue = "") String search,
             @RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "10") @Min(1) int pageSize){
-        return restaurantService.search(search, page, pageSize);
+            @RequestParam(defaultValue = "10") @Min(1) int size){
+        return restaurantService.search(search, page, size);
     }
 
     @GetMapping("/{id}")
