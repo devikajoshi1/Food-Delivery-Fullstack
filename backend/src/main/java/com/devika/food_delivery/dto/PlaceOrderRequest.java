@@ -3,11 +3,11 @@ package com.devika.food_delivery.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import lombok.NonNull;
+
 
 import java.util.List;
 
-public record PlaceOrderRequest(@NonNull Long restaurantId,
+public record PlaceOrderRequest(@NotNull Long restaurantId,
                                 @NotBlank @Size(max = 255) String deliveryAddress,
                                 @NotEmpty List<@Valid Line> items) {
 
