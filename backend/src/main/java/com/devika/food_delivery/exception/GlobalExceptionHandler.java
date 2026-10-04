@@ -53,4 +53,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "Something went wrong on our side");
     }
+
+    //401: wrong email or password
+    @ExceptionHandler(InvalidLoginException.class)
+    public ProblemDetail handleInvalidLogin(InvalidLoginException ex){
+        return ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNAUTHORIZED, ex.getMessage());
+    }
 }

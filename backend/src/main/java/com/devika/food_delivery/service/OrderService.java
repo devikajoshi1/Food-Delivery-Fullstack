@@ -9,10 +9,12 @@ import com.devika.food_delivery.repository.MenuItemRepository;
 import com.devika.food_delivery.repository.OrderRepository;
 import com.devika.food_delivery.repository.RestaurantRepository;
 import com.devika.food_delivery.repository.UserRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -70,5 +72,13 @@ public class OrderService {
                         "Order " + orderId + " not found"));
 
         return OrderResponse.from(order);
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getAllOrders() {
+        Sort newestFirst = Sort.by(Sort.Direction.DESC, "createdAt");
+        return orderRepository.findAll(newestFirst).stream()
+                .map(OrderResponse::from)
+                .toList();
     }
 }
