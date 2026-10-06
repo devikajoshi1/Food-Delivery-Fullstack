@@ -1,16 +1,13 @@
-import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router'
+import { useQuery } from '@tanstack/react-query'
 import { getMenu, getRestaurant } from '../api.js'
-
-
-const rupees = new Intl.NumberFormat('en-IN', {
-  style: 'currency',
-  currency: 'INR',
-})
+import { rupees } from '../format.js'
+import { useCart } from '../context/CartContext.jsx'
 
 export default function MenuPage() {
   // The :id part of /restaurants/:id
   const { id } = useParams()
+  const { lines, dispatch } = useCart()
 
   // Two requests, each remembered under its own key
   const restaurant = useQuery({
@@ -30,7 +27,28 @@ export default function MenuPage() {
     return <p className="error">Couldn't load this restaurant.</p>
   }
 
-  return (
+  function addToCart(item) {
+    // A dish from another restaurant would empty the cart: ask first
+    const otherRestaurant =
+      lines.length > 0 && lines[0].restaurantId !== restaurant.data.id
+    if (otherRestaurant && !window.confirm('Start a new cart here?')) {
+      return
+    }
+
+    // Keep only what the cart page needs to show
+    dispatch({
+      type: 'add',
+      item: {
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        restaurantId: restaurant.data.id,
+        restaurantName: restaurant.data.name,
+      },
+    })
+  }
+
+    return (
     <div>
       <Link to="/" className="back-link">
         ← All restaurants
@@ -46,7 +64,12 @@ export default function MenuPage() {
               <strong>{item.name}</strong>
               <p className="muted">{item.description}</p>
             </div>
-            <strong>{rupees.format(item.price)}</strong>
+            <div className="row-end">
+              <strong>{rupees.format(item.price)}</strong>
+              <button className="button" onClick={() => addToCart(item)}>
+                Add
+              </button>
+            </div>
           </li>
         ))}
       </ul>

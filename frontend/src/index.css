@@ -105,6 +105,83 @@ h1{
   gap: 16px;
 }
 
-.manu li + li{
+.menu li + li{
   border-top: 1px solid var(--border);
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.nav-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Buttons: orange for actions, plain text for small links */
+.button {
+  display: inline-block;
+  padding: 8px 16px;
+  font: inherit;
+  color: white;
+  background: var(--orange);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.button:disabled {
+  opacity: 0.6;
+}
+.text-button {
+  padding: 0;
+  font: inherit;
+  color: var(--orange);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.row-end {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.qty {
+  width: 32px;
+  height: 32px;
+  font: inherit;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.total {
+  margin: 16px 0 24px;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* Forms: one field per line, label above its box */
+.narrow {
+  max-width: 400px;
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 16px 0;
+}
+.form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+}
+.form input {
+  padding: 8px 12px;
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 8px;
 }

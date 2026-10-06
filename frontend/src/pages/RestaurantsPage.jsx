@@ -10,7 +10,7 @@ export default function RestaurantsPage() {
     const {data, isPending, isError, error} = useQuery({
         queryKey:['restaurants', search],
         queryFn: ()=> getRestaurants(search),
-        placeholder: keepPreviousData,
+        placeholderData: keepPreviousData,
     })
 
   return (
