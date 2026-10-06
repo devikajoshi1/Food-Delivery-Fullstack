@@ -1,6 +1,8 @@
 package com.devika.food_delivery.service;
 
 import com.devika.food_delivery.dto.OrderResponse;
+import com.devika.food_delivery.dto.PaymentResponse;
+import com.devika.food_delivery.service.RazorpayGateway.RazorpayOrder;
 import com.devika.food_delivery.dto.PlaceOrderRequest;
 import com.devika.food_delivery.entity.*;
 import com.devika.food_delivery.exception.BadRequestException;
@@ -23,13 +25,18 @@ public class OrderService {
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
     private  final MenuItemRepository menuItemRepository;
+    private final RazorpayGateway razorpayGateway;
 
-    public OrderService(OrderRepository orderRepository, UserRepository userRepository,
-                        RestaurantRepository restaurantRepository, MenuItemRepository menuItemRepository) {
+    public OrderService(OrderRepository orderRepository,
+                        UserRepository userRepository,
+                        RestaurantRepository restaurantRepository,
+                        MenuItemRepository menuItemRepository,
+                        RazorpayGateway razorpayGateway) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.restaurantRepository = restaurantRepository;
         this.menuItemRepository = menuItemRepository;
+        this.razorpayGateway = razorpayGateway;
 
     }
 
@@ -66,12 +73,44 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderResponse getOrder(Long userId, Long orderId){
-        Order order = orderRepository.findById(orderId)
-                .filter(found -> found.getUser().getId().equals(userId))
-                .orElseThrow(()-> new NotFoundException(
-                        "Order " + orderId + " not found"));
+        return OrderResponse.from(findOwnOrder(userId, orderId));
+    }
 
-        return OrderResponse.from(order);
+    @Transactional
+    public PaymentResponse startPayment(Long userId, Long orderId) {
+        Order order = findOwnOrder(userId, orderId);
+        if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
+            throw new BadRequestException(
+                    "Order " + orderId + " is not waiting for payment");
+        }
+
+        // Razorpay counts in paise: ₹90.00 becomes 9000
+        long amountInPaise = order.getTotalAmount()
+                .movePointRight(2)
+                .longValueExact();
+
+        // A new Razorpay order for every attempt, so a new receipt too
+        String receipt = "order-" + orderId + "-" + System.currentTimeMillis();
+        RazorpayOrder razorpayOrder =
+                razorpayGateway.createOrder(amountInPaise, receipt);
+
+        // Remember it: lesson 0014 checks the payment against this id
+        order.setRazorpayOrderId(razorpayOrder.id());
+        orderRepository.save(order);
+
+        return new PaymentResponse(
+                razorpayGateway.keyId(),
+                razorpayOrder.id(),
+                razorpayOrder.amount(),
+                razorpayOrder.currency());
+    }
+
+    // Someone else's order is "not found": don't even admit it exists
+    private Order findOwnOrder(Long userId, Long orderId) {
+        return orderRepository.findById(orderId)
+                .filter(found -> found.getUser().getId().equals(userId))
+                .orElseThrow(() -> new NotFoundException(
+                        "Order " + orderId + " not found"));
     }
 
     @Transactional(readOnly = true)

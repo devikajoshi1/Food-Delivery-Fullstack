@@ -1,6 +1,7 @@
 package com.devika.food_delivery.controller;
 
 import com.devika.food_delivery.dto.OrderResponse;
+import com.devika.food_delivery.dto.PaymentResponse;
 import com.devika.food_delivery.dto.PlaceOrderRequest;
 import com.devika.food_delivery.service.OrderService;
 import jakarta.validation.Valid;
@@ -40,6 +41,14 @@ public class OrderController {
                                   @PathVariable Long id) {
         Long userId = Long.valueOf(jwt.getSubject());
         return orderService.getOrder(userId, id);
+    }
+
+    // Step 1 of paying: a Razorpay order that React's Checkout will use
+    @PostMapping("/{id}/payment")
+    public PaymentResponse startPayment(@AuthenticationPrincipal Jwt jwt,
+                                        @PathVariable Long id) {
+        Long userId = Long.valueOf(jwt.getSubject());
+        return orderService.startPayment(userId, id);
     }
 
 }
