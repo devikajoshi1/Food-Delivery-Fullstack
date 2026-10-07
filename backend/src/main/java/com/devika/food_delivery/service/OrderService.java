@@ -22,7 +22,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
-    private  final MenuItemRepository menuItemRepository;
+    private final MenuItemRepository menuItemRepository;
 
     public OrderService(OrderRepository orderRepository,
                         UserRepository userRepository,
@@ -67,16 +67,16 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public OrderResponse getOrder(Long userId, Long orderId){
+    public OrderResponse getOrder(Long userId, Long orderId) {
         return OrderResponse.from(findOwnOrder(userId, orderId));
     }
 
 
     //pay
     @Transactional
-    public OrderResponse pay(long userId, Long orderId, PaymentMethod method){
+    public OrderResponse pay(long userId, Long orderId, PaymentMethod method) {
         Order order = findOwnOrder(userId, orderId);
-        if(order.getStatus() != OrderStatus.PENDING_PAYMENT){
+        if (order.getStatus() != OrderStatus.PENDING_PAYMENT) {
             throw new BadRequestException(
                     "Order " + orderId + " is alredy paid");
         }
@@ -96,7 +96,6 @@ public class OrderService {
     }
 
 
-
     // Someone else's order is "not found": don't even admit it exists
     private Order findOwnOrder(Long userId, Long orderId) {
         return orderRepository.findById(orderId)
@@ -111,5 +110,31 @@ public class OrderService {
         return orderRepository.findAll(newestFirst).stream()
                 .map(OrderResponse::from)
                 .toList();
+    }
+
+    //admin
+    @Transactional
+    public OrderResponse updateStatus(Long orderId, OrderStatus newStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException(
+                        "Order " + orderId + " not found"
+                ));
+
+        if (newStatus == OrderStatus.PENDING_PAYMENT
+                || newStatus == OrderStatus.PAID) {
+            throw new BadRequestException(
+                    "Only a payment can set " + newStatus);
+        }
+        // Rule 2: an unpaid order can be cancelled, but not cooked
+        if (order.getStatus() == OrderStatus.PENDING_PAYMENT
+                && newStatus != OrderStatus.CANCELED) {
+            throw new BadRequestException(
+                    "Order " + orderId + " is not paid yet");
+        }
+
+        order.setStatus(newStatus);
+        orderRepository.save(order);
+        return OrderResponse.from(order);
+
     }
 }

@@ -65,7 +65,7 @@ export function getOrder(id, token) {
   return request(`/api/orders/${id}`, { token })
 }
 
-export function payOrder(orderId, token){
+export function payOrder(orderId, method, token){
   return request(`/api/orders/${orderId}/pay`,{
     method: 'POST',
     body:{method},
@@ -75,4 +75,17 @@ export function payOrder(orderId, token){
 
 export function getMyOrders(token){
   return request('/api/orders',{token})
+}
+
+//admin
+export function getAllOrders(token){
+  return request('/api/admin/orders',{ token })
+}
+
+export function updateOrderStatus(orderId, status, token){
+  return request(`/api/admin/orders/${orderId}/status`,{
+    method: 'PATCH',
+    body: { status },
+    token,
+  })
 }

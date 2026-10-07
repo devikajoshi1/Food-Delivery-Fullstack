@@ -212,3 +212,11 @@ h1{
 .row-link {
   flex: 1;
 }
+
+.status{
+  padding: 6px 8px;
+  font: inherit;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}

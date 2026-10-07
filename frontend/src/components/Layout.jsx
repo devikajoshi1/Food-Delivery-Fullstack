@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { useCart } from '../context/CartContext.jsx'
 
 export default function Layout() {
-  const { token, logOut } = useAuth()
+  const { token, role, logOut } = useAuth()
   const { lines } = useCart()
 
   // 2 naan + 1 dal = 3 items
@@ -19,6 +19,7 @@ export default function Layout() {
 
           {/* Right side: the cart, then log in or log out */}
           <div className="nav-links">
+            {role === 'ADMIN' && <Link to="/admin">Admin</Link>}
             <Link to="/cart">Cart ({count})</Link>
             {token ? (
               <>

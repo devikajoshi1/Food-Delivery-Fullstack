@@ -8,7 +8,7 @@ import OrderPage from './pages/OrderPage.jsx'
 import OrdersPage from './pages/OrdersPage.jsx'
 import PaymentPage from './pages/PaymentPage.jsx'
 import RestaurantsPage from './pages/RestaurantsPage.jsx'
-
+import AdminPage from './pages/AdminPage.jsx'
 
 export default function App() {
   return (
@@ -24,7 +24,8 @@ export default function App() {
         <Route element={<RequireLogin />}>
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/orders/:id" element={<OrderPage />} />
-                    <Route path="/orders/:id/pay" element={<PaymentPage />} />
+          <Route path="/orders/:id/pay" element={<PaymentPage />} />
+          <Route path="/admin" element={<AdminPage/>}/>
 
         </Route>
       </Route>

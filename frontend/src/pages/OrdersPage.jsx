@@ -1,4 +1,4 @@
-import React from 'react'
+import {rupees, statusText} from "../format"
 import { useAuth } from '../context/AuthContext'
 import { useQuery } from '@tanstack/react-query';
 import { getMyOrders } from '../api';

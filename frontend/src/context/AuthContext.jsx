@@ -23,11 +23,22 @@ export function AuthProvider({ children }) {
     queryClient.clear()
   }
 
+  const role = roleFrom(token)
+
   return (
-    <AuthContext value={{ token, saveToken, logOut }}>
+    <AuthContext value={{ token, role, saveToken, logOut }}>
       {children}
     </AuthContext>
   )
+}
+
+function roleFrom(token) {
+  if(!token){
+    return null;
+  }
+  const payload = token.split('.')[1]
+  const base64 = payload.replace(/-/g, '+').replace(/_/g, '/')
+  return JSON.parse(atob(base64)).role
 }
 
 // A hook next to a component is fine; tell ESLint so

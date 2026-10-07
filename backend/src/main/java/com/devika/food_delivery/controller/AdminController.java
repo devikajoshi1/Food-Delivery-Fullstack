@@ -1,10 +1,10 @@
 package com.devika.food_delivery.controller;
 
 import com.devika.food_delivery.dto.OrderResponse;
+import com.devika.food_delivery.dto.UpdateStatusRequest;
 import com.devika.food_delivery.service.OrderService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,5 +20,10 @@ public class AdminController {
     @GetMapping("/orders")
     public List<OrderResponse> allOders(){
         return orderService.getAllOrders();
+    }
+
+    @PatchMapping("/orders/{id}/status")
+    public OrderResponse updateStatus(@PathVariable Long id, @Valid @RequestBody UpdateStatusRequest request){
+        return orderService.updateStatus(id, request.status());
     }
 }
