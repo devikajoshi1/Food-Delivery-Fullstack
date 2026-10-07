@@ -64,3 +64,15 @@ export function placeOrder(order, token) {
 export function getOrder(id, token) {
   return request(`/api/orders/${id}`, { token })
 }
+
+export function payOrder(orderId, token){
+  return request(`/api/orders/${orderId}/pay`,{
+    method: 'POST',
+    body:{method},
+    token,
+  })
+}
+
+export function getMyOrders(token){
+  return request('/api/orders',{token})
+}

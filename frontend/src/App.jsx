@@ -1,11 +1,14 @@
-import { Routes, Route } from 'react-router'
+import { Route, Routes } from 'react-router'
 import Layout from './components/Layout.jsx'
 import RequireLogin from './components/RequireLogin.jsx'
-import RestaurantsPage from './pages/RestaurantsPage.jsx'
-import MenuPage from './pages/MenuPage.jsx'
 import CartPage from './pages/CartPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
+import MenuPage from './pages/MenuPage.jsx'
 import OrderPage from './pages/OrderPage.jsx'
+import OrdersPage from './pages/OrdersPage.jsx'
+import PaymentPage from './pages/PaymentPage.jsx'
+import RestaurantsPage from './pages/RestaurantsPage.jsx'
+
 
 export default function App() {
   return (
@@ -19,7 +22,10 @@ export default function App() {
 
         {/* Pages inside here need a logged-in user */}
         <Route element={<RequireLogin />}>
+          <Route path="/orders" element={<OrdersPage />} />
           <Route path="/orders/:id" element={<OrderPage />} />
+                    <Route path="/orders/:id/pay" element={<PaymentPage />} />
+
         </Route>
       </Route>
     </Routes>

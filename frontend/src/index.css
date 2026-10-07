@@ -185,3 +185,30 @@ h1{
   border: 1px solid var(--border);
   border-radius: 8px;
 }
+.nav {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Pay now / Paid by, on the right under the total */
+.pay {
+  text-align: right;
+}
+
+/* One payment method: a radio button and its name, in a box */
+.form .choice {
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+  font-size: 16px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* A link that fills the left side of a row (My orders) */
+.row-link {
+  flex: 1;
+}

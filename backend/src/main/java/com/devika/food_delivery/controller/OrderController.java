@@ -1,7 +1,7 @@
 package com.devika.food_delivery.controller;
 
 import com.devika.food_delivery.dto.OrderResponse;
-import com.devika.food_delivery.dto.PaymentResponse;
+import com.devika.food_delivery.dto.PayRequest;
 import com.devika.food_delivery.dto.PlaceOrderRequest;
 import com.devika.food_delivery.service.OrderService;
 import jakarta.validation.Valid;
@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -43,12 +44,18 @@ public class OrderController {
         return orderService.getOrder(userId, id);
     }
 
-    // Step 1 of paying: a Razorpay order that React's Checkout will use
-    @PostMapping("/{id}/payment")
-    public PaymentResponse startPayment(@AuthenticationPrincipal Jwt jwt,
-                                        @PathVariable Long id) {
+    @PostMapping("/{id}/pay")
+    public OrderResponse pay(@AuthenticationPrincipal Jwt jwt,
+                             @PathVariable Long id,
+                             @Valid @RequestBody PayRequest request){
         Long userId = Long.valueOf(jwt.getSubject());
-        return orderService.startPayment(userId, id);
+        return orderService.pay(userId, id, request.method());
+    }
+
+    @GetMapping
+    public List<OrderResponse> myOrders(@AuthenticationPrincipal Jwt jwt){
+        Long userId = Long.valueOf(jwt.getSubject());
+        return orderService.getMyOrders(userId);
     }
 
 }

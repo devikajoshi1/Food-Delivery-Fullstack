@@ -3,6 +3,8 @@ package com.devika.food_delivery.dto;
 import com.devika.food_delivery.entity.Order;
 import com.devika.food_delivery.entity.OrderItem;
 import com.devika.food_delivery.entity.OrderStatus;
+import com.devika.food_delivery.entity.PaymentMethod;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.List;
 public record OrderResponse(
         Long id,
         OrderStatus status,
+        PaymentMethod paymentMethod,
         String restaurantName,
         BigDecimal totalAmount,
         LocalDateTime createdAt,
@@ -26,6 +29,7 @@ public record OrderResponse(
         return new OrderResponse(
                 order.getId(),
                 order.getStatus(),
+                order.getPaymentMethod(),
                 order.getRestaurant().getName(),
                 order.getTotalAmount(),
                 order.getCreatedAt(),

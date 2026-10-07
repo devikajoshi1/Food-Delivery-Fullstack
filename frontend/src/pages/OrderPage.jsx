@@ -1,4 +1,4 @@
-import { useParams } from 'react-router'
+import { Link, useParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { getOrder } from '../api.js'
 import { rupees } from '../format.js'
@@ -39,6 +39,15 @@ export default function OrderPage() {
         ))}
       </ul>
       <p className="total">Total {rupees.format(order.data.totalAmount)}</p>
+      {order.data.status === 'PENDING_PAYMENT' ? (
+        <div className="pay">
+          <Link to={`/orders/${order.data.id}/pay`} className="button">Pay Now</Link>
+        </div>
+      ):(
+        order.data.paymentMethod && (
+          <p>Paid by{order.data.paymentMethod}</p>
+        )
+      )}
     </div>
   )
 }

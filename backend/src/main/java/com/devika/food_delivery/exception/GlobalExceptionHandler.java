@@ -4,7 +4,6 @@ import org.springframework.http.*;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -46,15 +45,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problem.setProperty("errors", errors);
         return ResponseEntity.badRequest().body(problem);
     }
-    // 502: Razorpay said no, or couldn't be reached. The details go to the log
-    @ExceptionHandler(RestClientException.class)
-    public ProblemDetail handlePaymentProvider(RestClientException ex) {
-        logger.error("Razorpay call failed", ex);
-        return ProblemDetail.forStatusAndDetail(
-                HttpStatus.BAD_GATEWAY,
-                "The payment provider didn't accept the request");
-    }
-
     // 500: anything unexpected. Log the details, tell the client nothing.
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleUnexpected(Exception ex) {

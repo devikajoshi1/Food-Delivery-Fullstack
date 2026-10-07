@@ -21,9 +21,12 @@ export default function Layout() {
           <div className="nav-links">
             <Link to="/cart">Cart ({count})</Link>
             {token ? (
-              <button className="text-button" onClick={logOut}>
-                Log out
-              </button>
+              <>
+                <Link to="/orders">My orders</Link>
+                <button className="text-button" onClick={logOut}>
+                  Log out
+                </button>
+              </>
             ) : (
               <Link to="/login">Log in</Link>
             )}
